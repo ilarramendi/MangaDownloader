@@ -1,0 +1,17 @@
+<ComicInfo>
+  <Title>EPISODE.NAME</Title> 
+  <Series>MANGANAME</Series>
+  <Number>0</Number> <!-- Episode Number)-->
+  <Volume>2000</Volume> <!-- Manga Name (YEAR)-->
+  <AlternateSeries>READLIST</AlternateSeries>
+  <Summary>DESCRIPTION</Summary>
+  <Notes>NOTES</Notes>
+  <Year>2010</Year>
+  <Month>11</Month>
+  <Day>20</Day>
+  <Writer>WRITER</Writer>
+  <Penciller>ARTIST</Penciller>
+  <Publisher>PUBLISHER</Publisher>
+  <Genre>GENRE</Genre>
+  <LanguageISO>es</LanguageISO>
+</ComicInfo>
