@@ -14,6 +14,7 @@ Metadata is saved as ComicInfo.xml inside .CBZ files, this is intended to work w
 - [ ] Removing of ugly first pages added by translators
 - [ ] Individual chapter downloading
 - [ ] Individual manga downloading
+- [ ] Save as EPUB
 
 # Important !!
 Please dont set the delay to a very low value, this will hammer the providers servers (be nice :)), recommended value is 1.
