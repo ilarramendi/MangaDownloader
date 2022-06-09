@@ -6,6 +6,8 @@ start in download -> download show in parameter -d or all if -D
 
 '''
 
+# TODO make the script easy to kill
+
 from functions import add, download
 import json
 from os.path import isfile
@@ -22,7 +24,7 @@ if '-a' in argv:
     if manga: mangas.append(manga)
 elif '-d' in argv:
     for i, manga in enumerate(mangas):
-        print(f"{i}: {manga['name']}")
+        print(f"{i}: {manga['name']} [{manga['provider']}]")
     download(mangas[int(input())])
 
 with open("mangas.json", "w") as file:

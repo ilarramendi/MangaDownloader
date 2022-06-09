@@ -1,4 +1,3 @@
-from providers.kissmanga import search, chapters, get
 import requests
 import shutil
 import os
@@ -6,6 +5,11 @@ from zipfile import ZipFile
 from glob import glob
 from time import sleep
 import lxml.etree as ET
+
+import providers.kissmanga
+import providers.manganato
+
+providers = {'kissmanga': providers.kissmanga, 'manganato': providers.manganato}
 
 BASE_PATH = '/media/e/manga'
 
@@ -15,13 +19,14 @@ def add():
         print('Manga name: ', end='')
         name = input()
     
-    server = "0"
+    server = "-1"
     while not server.isdigit() or int(server) < 0 or int(server) > 2:
-        print('\n1: testserver\n2: testttt\nServer number: ', end='')
-        server = input()
-    server = int(server)
+        for i, p in enumerate(providers):
+            print(f"{i}: {p}")
+        server = input('Select server: ')
+    server = list(providers.keys())[int(server)]
     
-    mangas = search(name)  
+    mangas = providers[server].search(name)  
     length = len(str(len(mangas)))
     for i, manga in enumerate(mangas):
         print(f"{str(i).zfill(length)}: {manga['name']}")
@@ -33,11 +38,11 @@ def add():
     manga = mangas[int(manga)]
     if not updateAniiList(manga): return False
 
-    manga['path'] = f"{BASE_PATH}/{manga['name'].replace('/', '-')} ({manga['startDate']['year']})"
+    manga['path'] = f"{BASE_PATH}/{manga['name'].replace('/', '-')} ({manga['startDate']['year']}) [{manga['provider']}]"
     inp = input(f"Select path ({manga['path']}): ")
     if inp != '': manga['path'] = inp
 
-    manga['chapters'] = chapters(manga['url'])
+    manga['chapters'] = providers[server].chapters(manga['url'])
 
     return manga
 
@@ -47,12 +52,12 @@ def download(manga):
     if not os.path.exists(manga['path'] + '/poster.jpg'): downloadImage(manga['path'] + '/poster.jpg', manga['cover'])
 
     for i, chapter in enumerate(reversed(manga['chapters'])):
-        out = f"{manga['path']}/[{chapter['number']}] {chapter['name'].replace('/', '-')} [kissmanga].cbz"
+        out = f"{manga['path']}/[{chapter['number']}] {chapter['name'].replace('/', '-')}.cbz"
         if os.path.isfile(out): continue
         
         os.mkdir("./chapter")
 
-        for j, image in enumerate(get(chapter['url'])):
+        for j, image in enumerate(providers[manga['provider']].get(chapter['url'])):
             if not downloadImage(f"./chapter/panel-{j}.jpg", image): 
                 print(f"Failed to download: {manga['name']} ({chapter['number']}): {chapter['name']}")
                 break
@@ -113,7 +118,8 @@ def downloadImage(output, url):
     i = 0
     while i < 5:
         try:
-            res = requests.get(url, stream=True, timeout=10)
+            # TODO only add headers if needed
+            res = requests.get(url, stream=True, timeout=10, headers={'Referer': 'https://readmanganato.com/', 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36'})
             if res.status_code == 200:
                 with open(output ,'wb') as f:
                     shutil.copyfileobj(res.raw, f)
@@ -161,7 +167,6 @@ def updateAniiList(manga):
         if response.status_code == 200 and info['data']['Media'] is not None:
             info = info['data']['Media']
             title = info['title']['romaji'] if 'romaji' in info['title'] else info['title']['english']
-            print(info)
             inp = input(f'\rFound manga "{title}" on anilist with id: {info["id"]}, This looks ok? (y)/n: ')
             if inp == 'n': return False
 
