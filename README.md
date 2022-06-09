@@ -1,6 +1,9 @@
-# Manga-Downloader
-Tool to automaticaly download manga and metadata, all suggestions are welcome :)
+# MangaDownloader
+Tool to automaticaly download manga and metadata, suggestions and providers are welcome :)
 
-Supported output files are .PDF and .CBZ
+Metadata is saved as ComicInfo.xml inside the .CBZ files, this is intended to work with [Komga](https://komga.org/)
 
-Metadata is saved as ComicInfo.xml inside .CBZ files, this is intended to work with [Komga](https://komga.org/)
+## Usage:
+-a -> Add new manga (guided)
+-d -> Download all missing chapters of selected manga
+-u -> Update manga chapters
